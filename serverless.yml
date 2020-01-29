@@ -1,0 +1,35 @@
+app: todo-list
+org: cfr4123
+service: socket-for-crud
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-west-2
+  websocketsApiName: custom-websockets-api-name
+  websocketApiRouteSelectionExpression: $request.body.action
+  timeout: 50
+
+functions:
+  connectionHandler:
+    handler: handler.onConnect
+    events:
+      - websocket:
+          route: $connect
+  disconnectHandler:
+    handler: handler.onDisconnect
+    events:
+      - websocket:
+          route: $disconnect
+  crudHandler:
+    handler: handler.onCrud
+    events:
+      - websocket:
+        route: get
+      - websocket:
+        route: post
+      - websocket:
+        route: update
+      - websocket:
+        route: delete
